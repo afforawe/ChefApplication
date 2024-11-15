@@ -1,5 +1,6 @@
 package com.example.chef.service;
 
+import com.example.chef.model.dto.SaladDto;
 import com.example.chef.model.entity.Salad;
 import com.example.chef.model.entity.SaladComposition;
 
@@ -10,6 +11,8 @@ public interface SaladService {
     boolean existsById(Long id);
 
     Salad findOne(Long id);
+
+    SaladDto findByName(String saladName);
 
     Salad save(Salad entity);
 

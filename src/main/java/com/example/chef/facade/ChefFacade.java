@@ -5,7 +5,7 @@ import com.example.chef.model.dto.VegetableDto;
 import com.example.chef.model.dto.create.SaladCompositionCreateDto;
 import com.example.chef.model.dto.create.SaladCreateDto;
 import com.example.chef.model.dto.create.VegetableCreateDto;
-import com.example.chef.model.dto.update.VegetableUpdateDto;
+import com.example.chef.model.entity.Salad;
 
 import java.util.List;
 
@@ -15,13 +15,17 @@ public interface ChefFacade {
 
     List<VegetableDto> findAllVegetable();
 
-    VegetableDto createVegetable(Long vegetableId, VegetableCreateDto dto);
+    VegetableDto createVegetable(VegetableCreateDto dto);
 
     void removeVegetable(Long id);
+
+    void deleteVegetableByName(String vegetableName);
 
     //---
 
     SaladDto findOneSalad(Long id);
+
+    SaladDto findByName(String name);
 
     SaladDto createSalad(SaladCreateDto dto);
 

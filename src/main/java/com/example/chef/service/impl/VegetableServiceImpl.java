@@ -2,6 +2,7 @@ package com.example.chef.service.impl;
 
 import com.example.chef.converter.VegetableConverter;
 import com.example.chef.model.dto.VegetableDto;
+import com.example.chef.model.dto.create.VegetableCreateDto;
 import com.example.chef.model.entity.Vegetable;
 import com.example.chef.repository.VegetableRepository;
 import com.example.chef.service.VegetableService;
@@ -30,12 +31,31 @@ public class VegetableServiceImpl implements VegetableService {
                 () -> new EntityNotFoundException("Vegetable not found by id: " + id));
     }
 
-    @Override
-    public Vegetable save(Vegetable entity) {
-        return repository.save(entity);
+
+    public VegetableDto createVegetable(VegetableCreateDto dto) {
+        repository.findByName(dto.getName()).ifPresent(vegetable -> {
+            throw new EntityExistsException("Vegetable " + dto.getName() + " already exists");
+        });
+
+        Vegetable vegetable = vegetableConverter.convert(dto);
+        Vegetable saved = repository.save(vegetable);
+
+        return vegetableConverter.convert(saved);
     }
 
     public void deleteVegetable(Long id) {
+        repository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Vegetable not found by id: " + id)
+        );
         repository.deleteById(id);
+    }
+
+    @Override
+    public void deleteVegetableByName(String vegetableName) {
+        Vegetable vegetable = repository.findByName(vegetableName).orElseThrow(
+                () -> new EntityNotFoundException("Vegetable not found by name: " + vegetableName)
+        );
+
+        repository.delete(vegetable);
     }
 }

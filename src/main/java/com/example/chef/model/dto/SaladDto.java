@@ -5,7 +5,8 @@ import java.util.List;
 
 import java.math.BigDecimal;
 
-@NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
 public class SaladDto {
 
@@ -13,4 +14,5 @@ public class SaladDto {
     private String name;
     private BigDecimal weight;
     private BigDecimal calories;
+    private List<SaladCompositionDto> compositions;
 }

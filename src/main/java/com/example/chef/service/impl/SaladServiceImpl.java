@@ -1,5 +1,9 @@
 package com.example.chef.service.impl;
 
+import com.example.chef.converter.SaladCompositionConverter;
+import com.example.chef.converter.SaladConverter;
+import com.example.chef.model.dto.SaladCompositionDto;
+import com.example.chef.model.dto.SaladDto;
 import com.example.chef.model.entity.Salad;
 import com.example.chef.model.entity.SaladComposition;
 import com.example.chef.model.entity.Vegetable;
@@ -15,6 +19,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
+
 @AllArgsConstructor
 @Service
 public class SaladServiceImpl implements SaladService {
@@ -22,6 +27,8 @@ public class SaladServiceImpl implements SaladService {
     private final SaladRepository saladRepository;
     private final VegetableRepository vegetableRepository;
     private final SaladCompositionRepository saladCompositionRepository;
+    private final SaladCompositionConverter saladCompositionConverter;
+    private final SaladConverter saladConverter;
 
     @Override
     public boolean existsById(Long id) {
@@ -36,6 +43,22 @@ public class SaladServiceImpl implements SaladService {
     }
 
     @Override
+    public SaladDto findByName(String saladName) {
+
+        Salad salad = saladRepository.findByName(saladName).orElseThrow(
+                () -> new EntityNotFoundException("Salad not found with name: " + saladName)
+        );
+
+        List<SaladComposition> compositions = saladCompositionRepository.findAllBySaladId(salad.getId());
+        List<SaladCompositionDto> compositionDto = compositions.stream()
+                .map(saladCompositionConverter::convert)
+                .toList();
+        SaladDto saladDto = saladConverter.convert(salad);
+        saladDto.setCompositions(compositionDto);
+        return saladDto;
+    }
+
+    @Override
     public Salad save(Salad entity) {
         return saladRepository.save(entity);
     }
@@ -45,7 +68,7 @@ public class SaladServiceImpl implements SaladService {
         Salad salad = findOne(saladId);
 
         Vegetable vegetable = vegetableRepository.findById(composition.getVegetableId()).orElseThrow(
-                () -> new RuntimeException("Vegetable not found")
+                () -> new RuntimeException("qwertyu")
         );
 
         var compositionOptional = saladCompositionRepository.findBySaladIdAndVegetableId(saladId, vegetable.getId());

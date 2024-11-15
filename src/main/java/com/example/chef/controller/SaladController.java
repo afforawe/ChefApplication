@@ -21,6 +21,11 @@ public class SaladController {
         return facade.findOneSalad(id);
     }
 
+    @GetMapping("/by-name")
+    public SaladDto findByName(@RequestParam String name) {
+        return facade.findByName(name);
+    }
+
     @PostMapping
     public SaladDto createSalad(@RequestBody SaladCreateDto dto) {
         return facade.createSalad(dto);

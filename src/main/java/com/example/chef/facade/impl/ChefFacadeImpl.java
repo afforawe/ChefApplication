@@ -9,9 +9,7 @@ import com.example.chef.model.dto.VegetableDto;
 import com.example.chef.model.dto.create.SaladCompositionCreateDto;
 import com.example.chef.model.dto.create.SaladCreateDto;
 import com.example.chef.model.dto.create.VegetableCreateDto;
-import com.example.chef.model.dto.update.VegetableUpdateDto;
 import com.example.chef.model.entity.SaladComposition;
-import com.example.chef.model.entity.Vegetable;
 import com.example.chef.service.SaladService;
 import com.example.chef.service.VegetableService;
 import lombok.AllArgsConstructor;
@@ -39,21 +37,18 @@ public class ChefFacadeImpl implements ChefFacade {
         return vegetableConverter.convert(vegetableService.findAllVegetable());
     }
 
-    @Override
-    public VegetableDto createVegetable(Long vegetableId, VegetableCreateDto dto) {
-        if (saladService.existsById(vegetableId)) {
-            Vegetable vegetable = vegetableConverter.convert(dto);
-            return vegetableConverter.convert(vegetableService.save(vegetable));
-        }
-        throw new RuntimeException("Vegetable already exists");
+    public VegetableDto createVegetable(VegetableCreateDto dto) {
+        return vegetableService.createVegetable(dto);
     }
 
     @Override
     public void removeVegetable(Long id) {
-        if (saladService.existsById(id)){
-            throw new RuntimeException("Vegetable not found");
-        }
         vegetableService.deleteVegetable(id);
+    }
+
+    @Override
+    public void deleteVegetableByName(String vegetableName) {
+        vegetableService.deleteVegetableByName(vegetableName);
     }
 
     //---
@@ -61,6 +56,11 @@ public class ChefFacadeImpl implements ChefFacade {
     @Override
     public SaladDto findOneSalad(Long id) {
         return null;
+    }
+
+    @Override
+    public SaladDto findByName(String name) {
+        return saladService.findByName(name);
     }
 
     @Override

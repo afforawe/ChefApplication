@@ -26,15 +26,18 @@ public class VegetableController {
     }
 
     @PostMapping
-    public VegetableDto createVegetable(@RequestParam Long id,
-                                        @RequestBody VegetableCreateDto dto) {
-        return facade.createVegetable(id, dto);
-
+    public VegetableDto createVegetable(@RequestBody VegetableCreateDto dto) {
+        return facade.createVegetable(dto);
     }
 
-    @PutMapping("/delete")
+    @DeleteMapping
     public void remove(Long id) {
         facade.removeVegetable(id);
+    }
+
+    @DeleteMapping("/name")
+    public void removeVegetableByName(@RequestParam String name) {
+        facade.deleteVegetableByName(name);
     }
 }
 

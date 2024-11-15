@@ -1,1 +1,25 @@
-spring.application.name=ChefApplication
+server:
+  port: 8080
+
+spring:
+  application:
+    name: chef-application
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/chef
+    username: root
+    password: root
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+springdoc:
+  api-docs:
+    path: /api-doc
+  swagger-ui:
+    path: /api-ui

@@ -7,9 +7,9 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class VegetableCreateDto {
+public class SaladCompositionCreateDto {
 
-    private String name;
-    private BigDecimal caloriesOneHundred;
-
+    private Long saladId;
+    private Long vegetableId;
+    private BigDecimal weight;
 }

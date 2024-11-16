@@ -7,8 +7,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -22,7 +20,7 @@ public class Salad extends NameEntity {
     @Column(precision = 6, scale = 2)
     private BigDecimal calories;
 
-    @OneToMany(mappedBy = "salad", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "salad", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<SaladComposition> composition;
 
     @Override

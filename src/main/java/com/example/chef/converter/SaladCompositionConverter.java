@@ -10,5 +10,5 @@ public interface SaladCompositionConverter {
 
     SaladComposition convert(SaladCompositionCreateDto source);
 
-    SaladCompositionDto convert (SaladComposition source);
+    SaladCompositionDto convert(SaladComposition source);
 }

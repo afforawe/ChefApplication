@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 @Setter
 public class SaladCompositionCreateDto {
 
-    private Long id;
     private Long saladId;
     private Long vegetableId;
     private BigDecimal weight;

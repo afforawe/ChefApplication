@@ -1,7 +1,8 @@
 package com.example.chef.model.dto;
 
-import lombok.*;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
@@ -14,5 +15,4 @@ public class SaladDto {
     private String name;
     private BigDecimal weight;
     private BigDecimal calories;
-    private List<SaladCompositionDto> compositions;
 }

@@ -1,6 +1,6 @@
 package com.example.chef.model.entity.parent;
 
-import jakarta.persistence.*;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
 

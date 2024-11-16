@@ -2,8 +2,6 @@ package com.example.chef.service.impl;
 
 import com.example.chef.converter.SaladCompositionConverter;
 import com.example.chef.converter.SaladConverter;
-import com.example.chef.model.dto.SaladCompositionDto;
-import com.example.chef.model.dto.SaladDto;
 import com.example.chef.model.entity.Salad;
 import com.example.chef.model.entity.SaladComposition;
 import com.example.chef.model.entity.Vegetable;
@@ -11,8 +9,11 @@ import com.example.chef.repository.SaladCompositionRepository;
 import com.example.chef.repository.SaladRepository;
 import com.example.chef.repository.VegetableRepository;
 import com.example.chef.service.SaladService;
+import com.example.chef.util.CaloriesUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,52 +37,58 @@ public class SaladServiceImpl implements SaladService {
     }
 
     @Override
-    public Salad findOne(Long id) {
+    public Salad findById(Long id) {
         return saladRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("qwertyui")
+                () -> new EntityNotFoundException("Salad not found with id: " + id)
         );
     }
 
     @Override
-    public SaladDto findByName(String saladName) {
+    public Salad save(Salad salad) {
+        if (salad.getCalories() == null && salad.getWeight() == null) {
+            salad.setWeight(BigDecimal.ZERO);
+            salad.setCalories(BigDecimal.ZERO);
+        }
+        return saladRepository.save(salad);
+    }
 
+    @Override
+    public Page<Salad> findAll(Pageable pageable) {
+        return saladRepository.findAll(pageable);
+    }
+
+    @Override
+    public void remove(Long id) {
+        saladRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteSaladByName(String saladName) {
         Salad salad = saladRepository.findByName(saladName).orElseThrow(
                 () -> new EntityNotFoundException("Salad not found with name: " + saladName)
         );
-
-        List<SaladComposition> compositions = saladCompositionRepository.findAllBySaladId(salad.getId());
-        List<SaladCompositionDto> compositionDto = compositions.stream()
-                .map(saladCompositionConverter::convert)
-                .toList();
-        SaladDto saladDto = saladConverter.convert(salad);
-        saladDto.setCompositions(compositionDto);
-        return saladDto;
-    }
-
-    @Override
-    public Salad save(Salad entity) {
-        return saladRepository.save(entity);
+        saladRepository.delete(salad);
     }
 
     @Override
     public Salad save(Long saladId, SaladComposition composition) {
-        Salad salad = findOne(saladId);
+        Salad salad = findById(saladId);
 
         Vegetable vegetable = vegetableRepository.findById(composition.getVegetableId()).orElseThrow(
-                () -> new RuntimeException("qwertyu")
+                () -> new RuntimeException("Vegetable not found with id: " + composition.getVegetableId())
         );
 
         var compositionOptional = saladCompositionRepository.findBySaladIdAndVegetableId(saladId, vegetable.getId());
         if (compositionOptional.isPresent()) {
             var compositionExists = compositionOptional.get();
             compositionExists.setWeight(compositionExists.getWeight().add(composition.getWeight()));
-            compositionExists.setCalories(caloriesCount(vegetable.getCaloriesOneHundred(), compositionExists.getWeight()));
+            compositionExists.setCalories(CaloriesUtils.caloriesCount(vegetable.getCaloriesOneHundred(), compositionExists.getWeight()));
             saladCompositionRepository.save(compositionExists);
         } else {
             composition.setSaladId(saladId);
             composition.setSalad(salad);
             composition.setVegetable(vegetable);
-            composition.setCalories(caloriesCount(vegetable.getCaloriesOneHundred(), composition.getWeight()));
+            composition.setCalories(CaloriesUtils.caloriesCount(vegetable.getCaloriesOneHundred(), composition.getWeight()));
             saladCompositionRepository.save(composition);
         }
 
@@ -106,12 +113,6 @@ public class SaladServiceImpl implements SaladService {
         for (SaladComposition item : list) {
             save(saladId, item);
         }
-        return findOne(saladId);
-    }
-
-    private BigDecimal caloriesCount(BigDecimal caloriesOneHundred, BigDecimal weight) {
-        var div = new BigDecimal("100");
-        BigDecimal result = caloriesOneHundred.multiply(weight);
-        return result.divide(div);
+        return findById(saladId);
     }
 }

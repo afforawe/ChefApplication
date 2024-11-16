@@ -1,42 +1,53 @@
 package com.example.chef.controller;
 
 import com.example.chef.facade.ChefFacade;
+import com.example.chef.model.dto.PageDto;
 import com.example.chef.model.dto.VegetableDto;
 import com.example.chef.model.dto.create.VegetableCreateDto;
+import com.example.chef.model.dto.update.VegetableUpdateDto;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/vegetables")
-public class VegetableController {
+public class VegetableController implements PageController<VegetableDto>, CommonController<VegetableDto, VegetableCreateDto, VegetableUpdateDto>,
+        DeleteByNameController {
 
     private final ChefFacade facade;
 
-    @GetMapping
-    public VegetableDto findOneVegetable(@RequestParam Long id) {
-        return facade.findOneVegetable(id);
+    @Override
+    public ResponseEntity<List<VegetableDto>> findAll(PageDto dto) {
+        return new ResponseEntity<>(facade.findAllVegetables(dto), HttpStatus.OK);
     }
 
-    @GetMapping("/list")
-    public List<VegetableDto> findAllVegetable() {
-        return facade.findAllVegetable();
+    @Override
+    public ResponseEntity<VegetableDto> findById(Long id) {
+        return new ResponseEntity<>(facade.findVegetableById(id), HttpStatus.OK);
     }
 
-    @PostMapping
-    public VegetableDto createVegetable(@RequestBody VegetableCreateDto dto) {
-        return facade.createVegetable(dto);
+    @Override
+    public ResponseEntity<VegetableDto> update(VegetableUpdateDto dto) {
+        return new ResponseEntity<>(facade.updateVegetable(dto), HttpStatus.OK);
     }
 
-    @DeleteMapping
+    @Override
+    public ResponseEntity<VegetableDto> create(VegetableCreateDto dto) {
+        return new ResponseEntity<>(facade.createVegetable(dto), HttpStatus.OK);
+    }
+
+    @Override
     public void remove(Long id) {
         facade.removeVegetable(id);
     }
 
-    @DeleteMapping("/name")
-    public void removeVegetableByName(@RequestParam String name) {
+    @Override
+    public void remove(String name) {
         facade.deleteVegetableByName(name);
     }
 }

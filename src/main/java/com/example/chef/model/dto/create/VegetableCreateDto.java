@@ -1,6 +1,5 @@
 package com.example.chef.model.dto.create;
 
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,9 +9,7 @@ import java.math.BigDecimal;
 @Setter
 public class VegetableCreateDto {
 
-    private Long id;
     private String name;
     private BigDecimal caloriesOneHundred;
-
 
 }

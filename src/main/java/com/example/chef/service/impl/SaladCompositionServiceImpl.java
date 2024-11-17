@@ -2,20 +2,25 @@ package com.example.chef.service.impl;
 
 import com.example.chef.model.entity.SaladComposition;
 import com.example.chef.repository.SaladCompositionRepository;
+import com.example.chef.repository.VegetableRepository;
 import com.example.chef.service.SaladCompositionService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+
 
 @AllArgsConstructor
 @Service
 public class SaladCompositionServiceImpl implements SaladCompositionService {
 
-    private SaladCompositionRepository repository;
+    private SaladCompositionRepository saladCompositionRepository;
+    private VegetableRepository vegetableRepository;
 
     @Override
-    public List<SaladComposition> findBySalad(Long saladId) {
-        return repository.findAllBySaladId(saladId);
+    public Page<SaladComposition> findAllBySaladId(Long saladId, Pageable pageable) {
+        return saladCompositionRepository.findAllBySaladId(saladId, pageable);
     }
+
 }

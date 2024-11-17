@@ -1,10 +1,11 @@
 package com.example.chef.service;
 
 import com.example.chef.model.entity.SaladComposition;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface SaladCompositionService {
 
-    List<SaladComposition> findBySalad(Long id);
+
+    Page<SaladComposition> findAllBySaladId(Long saladId, Pageable pageable);
 }

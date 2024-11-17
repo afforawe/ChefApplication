@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 public class SaladCompositionDto {
 
     private Long id;
-    private SaladDto salad;
     private VegetableDto vegetable;
     private BigDecimal weight;
     private BigDecimal calories;

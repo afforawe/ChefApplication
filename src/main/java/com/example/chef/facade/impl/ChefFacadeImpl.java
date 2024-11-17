@@ -5,6 +5,7 @@ import com.example.chef.converter.SaladConverter;
 import com.example.chef.converter.VegetableConverter;
 import com.example.chef.facade.ChefFacade;
 import com.example.chef.model.dto.PageDto;
+import com.example.chef.model.dto.SaladCompositionDto;
 import com.example.chef.model.dto.SaladDto;
 import com.example.chef.model.dto.VegetableDto;
 import com.example.chef.model.dto.create.SaladCompositionCreateDto;
@@ -15,6 +16,7 @@ import com.example.chef.model.dto.update.VegetableUpdateDto;
 import com.example.chef.model.entity.Salad;
 import com.example.chef.model.entity.SaladComposition;
 import com.example.chef.model.entity.Vegetable;
+import com.example.chef.service.SaladCompositionService;
 import com.example.chef.service.SaladService;
 import com.example.chef.service.VegetableService;
 import lombok.AllArgsConstructor;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @AllArgsConstructor
@@ -31,6 +34,7 @@ public class ChefFacadeImpl implements ChefFacade {
 
     private final VegetableService vegetableService;
     private final SaladService saladService;
+    private final SaladCompositionService saladCompositionService;
     private final VegetableConverter vegetableConverter;
     private final SaladConverter saladConverter;
     private final SaladCompositionConverter saladCompositionConverter;
@@ -94,6 +98,18 @@ public class ChefFacadeImpl implements ChefFacade {
     }
 
     @Override
+    public List<SaladDto> findSaladsByCaloriesRange(BigDecimal minCalories, BigDecimal maxCalories, PageDto dto) {
+        Pageable pageable = PageRequest.of(
+                dto.getPageNumber(),
+                dto.getPageSize(),
+                dto.getSortOrder().equals("asc")
+                        ? Sort.by(dto.getSortField()).ascending()
+                        : Sort.by(dto.getSortField()).descending()
+        );
+        return saladConverter.convert(saladService.findByCaloriesRange(minCalories, maxCalories, pageable).getContent());
+    }
+
+    @Override
     public SaladDto createSalad(SaladCreateDto dto) {
         return saladConverter.convert(saladService.save(saladConverter.convert(dto)));
     }
@@ -116,6 +132,20 @@ public class ChefFacadeImpl implements ChefFacade {
 
     //---SaladComposition---
 
+
+    @Override
+    public List<SaladCompositionDto> findAllSaladCompositions(Long saladId, PageDto dto) {
+        Pageable pageable = PageRequest.of(
+                dto.getPageNumber(),
+                dto.getPageSize(),
+                dto.getSortOrder().equals("asc")
+                        ? Sort.by(dto.getSortField()).ascending()
+                        : Sort.by(dto.getSortField()).descending()
+        );
+
+        return saladCompositionConverter.convert(saladCompositionService.findAllBySaladId(saladId, pageable).getContent());
+    }
+
     @Override
     public SaladDto createSaladComposition(Long saladId, SaladCompositionCreateDto dto) {
         if (saladService.existsById(saladId)) {
@@ -129,11 +159,12 @@ public class ChefFacadeImpl implements ChefFacade {
     public SaladDto createSaladComposition(Long saladId, List<SaladCompositionCreateDto> list) {
 
         if (list.isEmpty()) {
-            //todo
+            throw new IllegalArgumentException("Salad composition list is empty");
         }
         if (saladService.existsById(saladId)) {
             list.forEach(dto -> dto.setSaladId(saladId));
-            List<SaladComposition> compositionList = list.stream().map(saladCompositionConverter::convert).toList();
+            List<SaladComposition> compositionList = list.stream()
+                    .map(saladCompositionConverter::convert).toList();
             return saladConverter.convert(saladService.save(saladId, compositionList));
         }
         throw new RuntimeException("Salad composition not found");

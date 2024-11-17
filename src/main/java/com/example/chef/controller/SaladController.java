@@ -5,12 +5,16 @@ import com.example.chef.model.dto.PageDto;
 import com.example.chef.model.dto.SaladDto;
 import com.example.chef.model.dto.create.SaladCreateDto;
 import com.example.chef.model.dto.update.SaladUpdateDto;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @AllArgsConstructor
@@ -24,6 +28,14 @@ public class SaladController implements PageController<SaladDto>, CommonControll
     @Override
     public ResponseEntity<List<SaladDto>> findAll(PageDto dto) {
         return new ResponseEntity<>(facade.findAllSalads(dto), HttpStatus.OK);
+    }
+
+    @GetMapping("/filter-by-calories")
+    public ResponseEntity<List<SaladDto>> findSaladsByCaloriesRange(
+            @RequestParam BigDecimal min,
+            @RequestParam BigDecimal max,
+            @Valid PageDto dto) {
+        return new ResponseEntity<>(facade.findSaladsByCaloriesRange(min, max, dto), HttpStatus.OK);
     }
 
     @Override

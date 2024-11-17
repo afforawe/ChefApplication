@@ -8,12 +8,14 @@ import com.example.chef.model.entity.Vegetable;
 import com.example.chef.repository.SaladCompositionRepository;
 import com.example.chef.repository.SaladRepository;
 import com.example.chef.repository.VegetableRepository;
+import com.example.chef.repository.specification.SaladSpecification;
 import com.example.chef.service.SaladService;
 import com.example.chef.util.CaloriesUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -55,6 +57,12 @@ public class SaladServiceImpl implements SaladService {
     @Override
     public Page<Salad> findAll(Pageable pageable) {
         return saladRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Salad> findByCaloriesRange(BigDecimal minCalories, BigDecimal maxCalories, Pageable pageable) {
+        Specification<Salad> specification = SaladSpecification.findByCaloriesRange(minCalories, maxCalories);
+        return saladRepository.findAll(specification, pageable);
     }
 
     @Override
